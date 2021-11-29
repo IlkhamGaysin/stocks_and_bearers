@@ -1,0 +1,44 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@1.1.0
+
+jobs:
+  tests:
+    parallelism: 2
+    docker:
+      - image: circleci/ruby:2.7.5-node
+      - image: circleci/postgres:11.5-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test
+
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgresql://postgres@localhost/test
+      HOST: localhost
+
+    executor: ruby/default
+    steps:
+      - checkout
+      - ruby/install-deps
+
+      - run:
+          name: Database setup
+          command: bundle exec rails db:test:prepare
+
+      - run:
+          name: Check seeds
+          command: |
+            if [ $CIRCLE_NODE_INDEX -eq 0 ]
+            then
+              bundle exec rails db:seed
+            else
+              echo "Skipping on this container"
+            fi
+
+      - ruby/rspec-test
+
+workflows:
+  CD:
+    jobs:
+      - tests
