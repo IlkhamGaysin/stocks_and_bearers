@@ -27,13 +27,7 @@ jobs:
 
       - run:
           name: Check seeds
-          command: |
-            if [ $CIRCLE_NODE_INDEX -eq 0 ]
-            then
-              bundle exec rails db:seed
-            else
-              echo "Skipping on this container"
-            fi
+          command: bundle exec rails db:seed
 
       - ruby/rspec-test
 
