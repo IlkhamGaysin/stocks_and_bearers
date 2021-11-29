@@ -38,6 +38,6 @@ jobs:
       - ruby/rspec-test
 
 workflows:
-  CD:
+  CI:
     jobs:
       - tests
