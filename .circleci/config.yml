@@ -1,37 +1,54 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@1.1.0
+  ruby: circleci/ruby@1.2.0
 
 jobs:
-  tests:
+  build:
     docker:
-      - image: circleci/ruby:2.7.3
-      - image: circleci/postgres:11.5-alpine-ram
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: test
-
-    environment:
-      RAILS_ENV: test
-      DATABASE_URL: postgresql://postgres@localhost/test
-      HOST: localhost
-
-    executor: ruby/default
+      - image: cimg/ruby:2.7.3
     steps:
       - checkout
       - ruby/install-deps
-
+  lint:
+    docker:
+      - image: cimg/ruby:2.7.3
+    steps:
+      - checkout
+      - ruby/install-deps
+      - ruby/rubocop-check:
+          format: progress
+          label: Inspecting with Rubocop
+  test:
+    docker:
+      - image: cimg/ruby:2.7.3
+      - image: cimg/postgres:11.5-alpine-ram
+      - environment:
+          POSTGRES_DB: stocks_and_bearers_test
+          POSTGRES_PASSWORD: ''
+          POSTGRES_USER: test
+    environment:
+      BUNDLE_JOBS: '3'
+      BUNDLE_RETRY: '3'
+      PGHOST: 127.0.0.1
+      PGPASSWORD: ''
+      PGUSER: test
+      RAILS_ENV: test
+    steps:
+      - checkout
+      - ruby/install-deps
       - run:
+          command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
+          name: Wait for DB
+      - run:
+          command: 'bundle exec rails db:schema:load --trace'
           name: Database setup
-          command: bundle exec rails db:test:prepare
-
-      - run:
-          name: Check seeds
-          command: bundle exec rails db:seed
-
       - ruby/rspec-test
 
 workflows:
   CI:
     jobs:
-      - tests
+      - build
+      - lint
+      - test:
+          requires:
+            - build
