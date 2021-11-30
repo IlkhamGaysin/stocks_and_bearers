@@ -37,10 +37,10 @@ jobs:
       - checkout
       - ruby/install-deps
       - run:
-          command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
           name: Wait for DB
       - run:
-          command: 'bundle exec rails db:schema:load --trace'
+          command: bin/rails db:test:prepare
           name: Database setup
       - ruby/rspec-test
 
