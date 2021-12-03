@@ -20,7 +20,7 @@ servers:
 paths:
   /v1/stocks:
     post:
-      summary: ''
+      summary: Create a stock
       operationId: post-v1-stocks
       responses:
         '201':
@@ -162,7 +162,7 @@ paths:
               required:
                 - data
     get:
-      summary: ''
+      summary: Get stocks
       operationId: get-v1-stocks
       responses:
         '200':
@@ -329,7 +329,7 @@ paths:
           description: application/vnd.api+json
           required: true
     put:
-      summary: ''
+      summary: Update a stock
       operationId: put-v1-stocks
       responses:
         '200':
@@ -443,6 +443,215 @@ paths:
                     attributes:
                       name: Tesla
         description: ''
+    delete:
+      summary: Delete a stock
+      operationId: delete-v1-stocks
+      responses:
+        '204':
+          description: No Content
+      description: Endpoint to delete a stock.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+  /v1/bearers:
+    post:
+      summary: Create a bearer or assign it stocks
+      operationId: post-v1-bearers
+      responses:
+        '200':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      type: bearers
+                      attributes:
+                        name: Ilgam
+                      relationships:
+                        stocks:
+                          data:
+                            type: stocks
+                            id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - type
+                      - attributes
+                      - relationships
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                        enum:
+                          - bearers
+                        example: bearers
+                      attributes:
+                        type: object
+                        required:
+                          - name
+                        properties:
+                          name:
+                            type: string
+                            minLength: 1
+                      relationships:
+                        type: object
+                        required:
+                          - stocks
+                        properties:
+                          stocks:
+                            type: object
+                            required:
+                              - data
+                            properties:
+                              data:
+                                type: object
+                                required:
+                                  - type
+                                  - id
+                                properties:
+                                  type:
+                                    type: string
+                                    minLength: 1
+                                  id:
+                                    type: string
+                                    minLength: 1
+                required:
+                  - data
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: bearers
+                      attributes:
+                        name: Ilgam
+                      relationships:
+                        stocks:
+                          data:
+                            type: stocks
+                            id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+      description: Endpoint to create a bearer. If bearer already exists the endpoint expects stock or stocks to be passed so that they will be assigned the bearer.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  data:
+                    type: bearers
+                    attributes:
+                      title: Ilgam
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                      enum:
+                        - bearers
+                      example: bearers
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                          minLength: 1
+                    relationships:
+                      type: object
+                      required:
+                        - stocks
+                      properties:
+                        stocks:
+                          type: object
+                          required:
+                            - data
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - type
+                                - id
+                              properties:
+                                type:
+                                  type: string
+                                  minLength: 1
+                                  enum:
+                                    - stocks
+                                  example: stocks
+                                id:
+                                  type: string
+                                  minLength: 1
+                                  format: uuid
+                                  example: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              required:
+                - data
+            examples:
+              when user want to create a bearer with name 'Ilgam' and change ownership of a stock to newly created one:
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: Ilgam
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              when user want only to create a bearer with name 'Ilgam':
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: Ilgam
+              when user only wants to change ownership of stock/s to an existing bearer:
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: John
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+        description: |-
+          If you need to create a bearer and you don't want to assign the created bearer to stock/s you MUST NOT include the relationships key in you body.
+          If you want to create a bearer and assign the created bearer to stock/s YOU MUST include the relationships key in you body.
+          If you want to change ownership of stock/s to an existing bearer you MUST include the relationships key in you body AND pass the name of an eixsting bearer.
 components:
   schemas:
     Stock:
