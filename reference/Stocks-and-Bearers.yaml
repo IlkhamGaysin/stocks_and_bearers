@@ -2,9 +2,8 @@ openapi: 3.0.0
 info:
   title: Stocks and Bearers
   version: '1.0'
-  summary: This api shows how I built APIs using Ruby on Rails
   description: |-
-    The API contains mostly two enitites Stock and Bearer. Where stocks might be created with a referenced bearer, updated and listed. The bearers might be created and updated.
+    This api shows how I built APIs using Ruby on Rails. The API contains mostly two enitites Stock and Bearer. Where stocks might be created with a referenced bearer, updated and listed. The bearers might be created and updated.
     The API uses JSON api specification.
   contact:
     name: Ilgam
@@ -291,7 +290,7 @@ paths:
                         relationships:
                           bearer:
                             data:
-                              type: bearer
+                              type: bearers
                               id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
                               attributes:
                                 name: John
@@ -302,7 +301,7 @@ paths:
                         relationships:
                           bearer:
                             data:
-                              type: bearer
+                              type: bearers
                               id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
                               attributes:
                                 name: John
@@ -313,7 +312,7 @@ paths:
                         relationships:
                           bearer:
                             data:
-                              type: bearer
+                              type: bearers
                               id: 9ca9b0b5-ce3a-4c28-b556-30606c531b87
                               attributes:
                                 name: Pieter
