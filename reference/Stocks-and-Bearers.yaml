@@ -147,6 +147,7 @@ paths:
                       enum:
                         - stocks
                       example: stocks
+                      pattern: stocks
                     attributes:
                       type: object
                       required:
@@ -250,6 +251,7 @@ paths:
                           example: stocks
                           enum:
                             - stocks
+                          pattern: stocks
                         id:
                           type: string
                           minLength: 1
@@ -373,6 +375,7 @@ paths:
                         enum:
                           - bearers
                         example: bearers
+                        pattern: bearers
                       attributes:
                         type: object
                         required:
@@ -400,9 +403,15 @@ paths:
                                   type:
                                     type: string
                                     minLength: 1
+                                    enum:
+                                      - stocks
+                                    example: stocks
+                                    pattern: stocks
                                   id:
                                     type: string
                                     minLength: 1
+                                    example: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                                    format: uuid
                 required:
                   - data
               examples:
