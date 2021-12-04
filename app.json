@@ -1,0 +1,19 @@
+{
+  "name": "Stocks and Bearers API",
+  "description": "Sample app that shows how I implement JSON API applications based on test task",
+  "stack": "container",
+  "env": {
+    "RACK_ENV": {
+      "required": true
+    },
+    "RAILS_ENV": {
+      "required": true
+    },
+    "SECRET_KEY_BASE": {
+      "required": true
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ]
+}
