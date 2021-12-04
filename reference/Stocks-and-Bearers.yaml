@@ -1,0 +1,721 @@
+openapi: 3.0.0
+info:
+  title: Stocks and Bearers
+  version: '1.0'
+  description: |-
+    This api shows how I built APIs using Ruby on Rails. The API contains mostly two enitites Stock and Bearer. Where stocks might be created with a referenced bearer, updated and listed. The bearers might be created and updated.
+    The API uses JSON api specification.
+  contact:
+    name: Ilgam
+    url: 'https://github.com/IlkhamGaysin'
+  license:
+    name: MIT
+    url: 'https://spdx.org/licenses/MIT.html'
+servers:
+  - url: 'https://stocks-and-bearers-staging.herokuapp.com'
+    description: Staging
+  - description: Production
+    url: 'https://stocks-and-bearers-production.herokuapp.com'
+paths:
+  /v1/stocks:
+    post:
+      summary: Create a stock
+      operationId: post-v1-stocks
+      responses:
+        '201':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      type: stocks
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      attributes:
+                        name: Apple
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - type
+                      - id
+                      - attributes
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                        enum:
+                          - stocks
+                        example: stocks
+                      id:
+                        type: string
+                        minLength: 1
+                        format: uuid
+                      attributes:
+                        type: object
+                        required:
+                          - name
+                        properties:
+                          name:
+                            type: string
+                            minLength: 1
+                  relationships:
+                    type: object
+                    properties:
+                      bearer:
+                        type: object
+                        required:
+                          - data
+                        properties:
+                          data:
+                            type: object
+                            required:
+                              - type
+                              - id
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - bearers
+                                example: bearers
+                                minLength: 1
+                                pattern: bearers
+                              id:
+                                type: string
+                                format: uuid
+                                example: 453a4cc8-e246-42c2-bb30-4b2a00bafe5b
+                    required:
+                      - bearer
+                required:
+                  - data
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: stocks
+                      id: 17235511-9621-4f84-b2ad-021ae86f4fb3
+                      attributes:
+                        name: Apple
+                      relationships:
+                        bearer:
+                          data:
+                            type: bearers
+                            id: 453a4cc8-e246-42c2-bb30-4b2a00bafe5b
+      description: Endpoint to create a stock with a referenced bearer
+      parameters:
+        - schema:
+            type: string
+            example: application/vnd.api+json
+            enum:
+              - application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  data:
+                    type: photos
+                    attributes:
+                      title: Ember Hamster
+                      src: 'http://example.com/images/productivity.png'
+                    relationships:
+                      photographer:
+                        data:
+                          type: people
+                          id: '9'
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - attributes
+                    - relationships
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                      enum:
+                        - stocks
+                      example: stocks
+                      pattern: stocks
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                          minLength: 1
+                    relationships:
+                      type: object
+                      description: Key to specify relations to a stock
+                      required:
+                        - bearer
+                      properties:
+                        bearer:
+                          type: object
+                          required:
+                            - data
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - type
+                                - id
+                              properties:
+                                type:
+                                  type: string
+                                  minLength: 1
+                                  pattern: bearer
+                                  description: It defines relation name used on backend to identify which type assign to.
+                                  enum:
+                                    - bearer
+                                  example: bearer
+                                id:
+                                  type: string
+                                  minLength: 1
+                                  description: The uid of a bearer to connect to
+                                  example: 0468dfd2-6255-458a-842d-10db27f1fae0
+                                  format: uuid
+              required:
+                - data
+    get:
+      summary: Get stocks
+      operationId: get-v1-stocks
+      responses:
+        '200':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - type: stocks
+                        id: 0468dfd2-6255-458a-842d-10db27f1fae0
+                        attributes:
+                          name: Apple
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearer
+                              id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
+                              attributes:
+                                name: John
+                      - type: stocks
+                        id: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                        attributes:
+                          name: Microsoft
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearer
+                              id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
+                              attributes:
+                                name: John
+                      - type: stocks
+                        id: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                        attributes:
+                          name: NVIDIA
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearer
+                              id: 9ca9b0b5-ce3a-4c28-b556-30606c531b87
+                              attributes:
+                                name: Pieter
+                properties:
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 0
+                    items:
+                      type: object
+                      description: Primary data of a stock
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                          example: stocks
+                          enum:
+                            - stocks
+                          pattern: stocks
+                        id:
+                          type: string
+                          minLength: 1
+                          example: 975f81b3-7721-473c-a166-4e75f3564be8
+                          format: uuid
+                        attributes:
+                          type: object
+                          required:
+                            - name
+                          properties:
+                            name:
+                              type: string
+                              minLength: 1
+                        relationships:
+                          type: object
+                          required:
+                            - bearer
+                          properties:
+                            bearer:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      example: bearers
+                                      pattern: bearers
+                                      minLength: 1
+                                      enum:
+                                        - bearers
+                                    id:
+                                      type: string
+                                      format: uuid
+                                      minLength: 1
+                                      example: 1727d4e3-b5d7-4a59-8992-67c6897d130d
+                      required:
+                        - type
+                        - id
+                        - attributes
+                        - relationships
+                required:
+                  - data
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - type: stocks
+                        id: 0468dfd2-6255-458a-842d-10db27f1fae0
+                        attributes:
+                          name: Apple
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearers
+                              id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
+                      - type: stocks
+                        id: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                        attributes:
+                          name: Microsoft
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearers
+                              id: 1727d4e3-b5d7-4a59-8992-67c6897d130d
+                      - type: stocks
+                        id: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                        attributes:
+                          name: NVIDIA
+                        relationships:
+                          bearer:
+                            data:
+                              type: bearers
+                              id: 9ca9b0b5-ce3a-4c28-b556-30606c531b87
+      description: Endpoint to list all stocks with bearers
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+    parameters: []
+  /v1/bearers:
+    post:
+      summary: Create a bearer or assign it stocks
+      operationId: post-v1-bearers
+      responses:
+        '200':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      type: bearers
+                      attributes:
+                        name: Ilgam
+                      relationships:
+                        stocks:
+                          data:
+                            type: stocks
+                            id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - type
+                      - attributes
+                      - relationships
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                        enum:
+                          - bearers
+                        example: bearers
+                        pattern: bearers
+                      attributes:
+                        type: object
+                        required:
+                          - name
+                        properties:
+                          name:
+                            type: string
+                            minLength: 1
+                      relationships:
+                        type: object
+                        required:
+                          - stocks
+                        properties:
+                          stocks:
+                            type: object
+                            required:
+                              - data
+                            properties:
+                              data:
+                                type: object
+                                required:
+                                  - type
+                                  - id
+                                properties:
+                                  type:
+                                    type: string
+                                    minLength: 1
+                                    enum:
+                                      - stocks
+                                    example: stocks
+                                    pattern: stocks
+                                  id:
+                                    type: string
+                                    minLength: 1
+                                    example: 284b4532-59e6-45a7-98c4-59ee36aa5f00
+                                    format: uuid
+                required:
+                  - data
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: bearers
+                      attributes:
+                        name: Ilgam
+                      relationships:
+                        stocks:
+                          data:
+                            type: stocks
+                            id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+      description: Endpoint to create a bearer. If bearer already exists the endpoint expects stock or stocks to be passed so that they will be assigned the bearer.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  data:
+                    type: bearers
+                    attributes:
+                      title: Ilgam
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                      enum:
+                        - bearers
+                      example: bearers
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                          minLength: 1
+                    relationships:
+                      type: object
+                      required:
+                        - stocks
+                      properties:
+                        stocks:
+                          type: object
+                          required:
+                            - data
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - type
+                                - id
+                              properties:
+                                type:
+                                  type: string
+                                  minLength: 1
+                                  enum:
+                                    - stocks
+                                  example: stocks
+                                  pattern: stocks
+                                id:
+                                  type: string
+                                  minLength: 1
+                                  format: uuid
+                                  example: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              required:
+                - data
+            examples:
+              when user want to create a bearer with name 'Ilgam' and change ownership of a stock to newly created one:
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: Ilgam
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+              when user want only to create a bearer with name 'Ilgam':
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: Ilgam
+              when user only wants to change ownership of stock/s to an existing bearer:
+                value:
+                  data:
+                    type: bearers
+                    attributes:
+                      name: John
+                    relationships:
+                      stocks:
+                        data:
+                          type: stocks
+                          id: 8b691adf-89e3-4fa4-a6c1-f324cf8d7ed6
+        description: |-
+          If you need to create a bearer and you don't want to assign the created bearer to stock/s you MUST NOT include the relationships key in you body.
+          If you want to create a bearer and assign the created bearer to stock/s YOU MUST include the relationships key in you body.
+          If you want to change ownership of stock/s to an existing bearer you MUST include the relationships key in you body AND pass the name of an eixsting bearer.
+  '/v1/stocks/{id}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 5d1a9be7-802b-416a-9a31-023e96c67d39
+          minLength: 1
+        name: id
+        in: path
+        required: true
+        description: uuid of a stock
+    put:
+      summary: Update a stock
+      operationId: put-v1-stocks
+      responses:
+        '200':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      type: stocks
+                      id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                      attributes:
+                        name: Tesla
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - type
+                      - id
+                      - attributes
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                        enum:
+                          - stocks
+                        example: stocks
+                        pattern: stocks
+                      id:
+                        type: string
+                        minLength: 1
+                        format: uuid
+                        example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                      attributes:
+                        type: object
+                        required:
+                          - name
+                        properties:
+                          name:
+                            type: string
+                            minLength: 1
+                required:
+                  - data
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: stocks
+                      id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                      attributes:
+                        name: Tesla
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+      description: Endpoint to update a stock. Bearer that owns a stock can't be updated here.
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  data:
+                    type: stocks
+                    id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    attributes:
+                      name: Tesla
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - id
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                      example: stocks
+                      enum:
+                        - stocks
+                    id:
+                      type: string
+                      minLength: 1
+                      format: uuid
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                          minLength: 1
+              required:
+                - data
+            examples:
+              example-1:
+                value:
+                  data:
+                    type: stocks
+                    id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                    attributes:
+                      name: Tesla
+        description: ''
+    delete:
+      summary: Delete a stock
+      operationId: delete-v1-stocks
+      responses:
+        '204':
+          description: No Content
+      description: Endpoint to delete a stock.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - application/vnd.api+json
+            example: application/vnd.api+json
+          in: header
+          name: Content-Type
+          description: application/vnd.api+json
+          required: true
+components:
+  schemas:
+    Stock:
+      title: Stock
+      type: object
+      description: This represents stock that is being using by bearers
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: 'John '
+      required:
+        - id
+        - name
+    Bearer:
+      title: Bearer
+      type: object
+      description: This represents a person who owns stock/s
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Apple
+      required:
+        - id
+        - name
+  securitySchemes: {}
