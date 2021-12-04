@@ -265,36 +265,41 @@ paths:
                             name:
                               type: string
                               minLength: 1
+                        relationships:
+                          type: object
+                          required:
+                            - bearer
+                          properties:
+                            bearer:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      example: bearers
+                                      pattern: bearers
+                                      minLength: 1
+                                      enum:
+                                        - bearers
+                                    id:
+                                      type: string
+                                      format: uuid
+                                      minLength: 1
+                                      example: 1727d4e3-b5d7-4a59-8992-67c6897d130d
                       required:
                         - type
                         - id
                         - attributes
-                  relationships:
-                    type: object
-                    required:
-                      - bearer
-                    properties:
-                      bearer:
-                        type: object
-                        required:
-                          - type
-                          - id
-                        properties:
-                          type:
-                            type: string
-                            enum:
-                              - bearers
-                            example: bearers
-                            minLength: 1
-                            pattern: bearers
-                          id:
-                            type: string
-                            format: uuid
-                            example: 1727d4e3-b5d7-4a59-8992-67c6897d130d
-                            minLength: 1
+                        - relationships
                 required:
                   - data
-                  - relationships
               examples:
                 example-1:
                   value:
